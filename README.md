@@ -2,14 +2,14 @@
 # lcu-vue (in development)
 LOL英雄联盟工具
 
-##Developer Tools 
+## Developer Tools 
 * [electron](https://github.com/electron/electron)
 * [element-plus](https://github.com/element-plus/element-plus)
 * [vueJs3](https://github.com/vuejs)
 * [shellJS](https://github.com/shelljs/shelljs)
 * [league-connect](https://github.com/matsjla/league-connect/)
 * [lcu-events](https://github.com/Sunney-X/lcu-events)
-##Reference
+## Reference
 * [lolhelper](https://gitee.com/dragon-GCS/lolhelper)
 
 ## Project setup

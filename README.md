@@ -9,6 +9,7 @@ LOL英雄联盟工具
 * [shellJS](https://github.com/shelljs/shelljs)
 * [league-connect](https://github.com/matsjla/league-connect/)
 * [lcu-events](https://github.com/Sunney-X/lcu-events)
+* [vue-cli-plugin-electron-builder](https://github.com/nklayman/vue-cli-plugin-electron-builder)
 ## Reference
 * [lolhelper](https://gitee.com/dragon-GCS/lolhelper)
 

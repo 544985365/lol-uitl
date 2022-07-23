@@ -130,29 +130,31 @@ export default {
       }, token).then(res => {
         this.summoner = res
         //console.log(res.accountId);
-        this.xp = Math.trunc(res.xpUntilNextLevel / (res.xpSinceLastLevel + res.xpUntilNextLevel) * 100)
+        this.xp =100- Math.trunc(res.xpUntilNextLevel / (res.xpSinceLastLevel + res.xpUntilNextLevel) * 100)
         this.summonerImg = 'https://dlied1.qq.com/lolapp/lol/summoner/profileicon/' + this.summoner.profileIconId + '.jpg'
         https({
           url: '/lol-match-history/v3/matchlist/account/' + this.summoner.accountId + '?begIndex=0&endIndex=10',
           type: 'GET'
         }, token).then(res => {
-          let temp = calculate_kda(res)
-          this.kda.kd = temp.kd()
-          this.kda.assis = temp.assis()
-          this.kda.kills = temp.kills()
-          this.kda.deaths = temp.deaths()
+          let temp = calculate_kda(res).then(resp=>{
+            console.log(resp)
+          })
+          this.kda.kd = temp.kd
+          this.kda.assis = temp.assis
+          this.kda.kills = temp.kills
+          this.kda.deaths = temp.deaths
           this.kda.tripleKills = temp.tripleKills
           this.kda.doubleKills = temp.doubleKills
           this.kda.pentaKills = temp.pentaKills
           this.kda.firstBloodKill = temp.firstBloodKill
-          this.kda.magicDamageDealt = temp.magicDamageDealt()
-          this.kda.physicalDamageDealt = temp.physicalDamageDealt()
+          this.kda.magicDamageDealt = temp.magicDamageDealt
+          this.kda.physicalDamageDealt = temp.physicalDamageDealt
           this.kda.quadraKills = temp.quadraKills
-          this.kda.totalDamageDealt = temp.totalDamageDealt()
-          this.kda.totalMinionsKilled = temp.totalMinionsKilled()
-          this.kda.win = temp.win()
-          this.kda.creepsPerMinDeltas = temp.creepsPerMinDeltas()
-          this.kda.goldPerMinDeltas = temp.goldPerMinDeltas()
+          this.kda.totalDamageDealt = temp.totalDamageDealt
+          this.kda.totalMinionsKilled = temp.totalMinionsKilled
+          this.kda.win = temp.win
+          this.kda.creepsPerMinDeltas = temp.creepsPerMinDeltas
+          this.kda.goldPerMinDeltas = temp.goldPerMinDeltas
 
         })
       })

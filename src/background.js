@@ -1,6 +1,6 @@
 'use strict'
 
-import {app, protocol, BrowserWindow, Menu, Tray, nativeImage,ipcMain} from 'electron'
+import {app, protocol, BrowserWindow, Menu, Tray, nativeImage, ipcMain} from 'electron'
 import {createProtocol} from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, {VUEJS3_DEVTOOLS} from 'electron-devtools-installer'
 import * as Path from "path";
@@ -78,46 +78,9 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-    ipcMain.on('MatchUtil',()=>{
-        win.hide()
-        if (matchWin != null){
-            matchWin.show()
-        }else {
-            matchWin = new BrowserWindow({
-                width: 400,
-                height: 700,
-                parent: win,
-                webPreferences: {
 
-                    // Use pluginOptions.nodeIntegration, leave this alone
-                    // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-                    nodeIntegration: true,
-                    contextIsolation: false,
-                    preload: Path.join(__dirname, 'preload.js')
-                }
-            })
-            if (process.env.WEBPACK_DEV_SERVER_URL) {
-                // Load the url of the dev server if in development mode
-                matchWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/MatchUtil')
-                if (!process.env.IS_TEST) matchWin.webContents.openDevTools({mode: 'detach'})
-            } else {
-                createProtocol('app')
-                // Load the index.html when not in development
-                matchWin.loadURL('app://./index.html/#/MatchUtil')
-            }
-            matchWin.setMenu(null)
-            matchWin.resizable = false
-
-            matchWin.maximizable = false
-            matchWin.once('ready-to-show', () => {
-                matchWin.show();
-            });
-        }
-
-    })
-
-    ipcMain.on('MatchUtilClose',()=>{
-        if (matchWin != null){
+    ipcMain.on('MatchUtilClose', () => {
+        if (matchWin != null) {
             matchWin.close()
             matchWin = null
         }
@@ -162,3 +125,47 @@ if (isDevelopment) {
         })
     }
 }
+
+ipcMain.on('MatchUtil', () => {
+    win.hide()
+    if (matchWin != null) {
+        matchWin.show()
+    } else {
+        matchWin = new BrowserWindow({
+            width: 400,
+            height: 700,
+            webPreferences: {
+                // Use pluginOptions.nodeIntegration, leave this alone
+                // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+                nodeIntegration: true,
+                contextIsolation: false,
+                preload: Path.join(__dirname, 'preload.js')
+            }
+        })
+        if (process.env.WEBPACK_DEV_SERVER_URL) {
+            // Load the url of the dev server if in development mode
+            matchWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/MatchUtil')
+            if (!process.env.IS_TEST) matchWin.webContents.openDevTools({mode: 'detach'})
+        } else {
+            createProtocol('app')
+            // Load the index.html when not in development
+            matchWin.loadURL('app://./index.html/#/MatchUtil')
+        }
+        matchWin.setMenu(null)
+        matchWin.resizable = false
+
+        matchWin.maximizable = false
+        matchWin.setPosition(60, 70, true)
+        matchWin.once('ready-to-show', () => {
+            matchWin.show();
+        });
+        matchWin.on('close', () => {
+            if (matchWin != null) {
+                //matchWin.close()
+                matchWin = null
+            }
+
+        })
+    }
+
+})

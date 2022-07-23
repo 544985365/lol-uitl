@@ -36,12 +36,14 @@ export default {
     if (localStorage.getItem('auto_accept') == null) {
       localStorage.setItem('auto_accept', 'no')
     }
-
     if (localStorage.getItem('auto_choose') == null) {
       localStorage.setItem('auto_choose', 'no')
     }
     if (localStorage.getItem('auto_start_match_utils') == null) {
       localStorage.setItem('auto_start_match_utils', 'no')
+    }
+    if (localStorage.getItem("auto_choose_rank") == null) {
+      localStorage.setItem('auto_choose_rank', 'no')
     }
 
 
@@ -63,6 +65,17 @@ export default {
               url: '/lol-matchmaking/v1/ready-check/accept',
               type: 'POST'
             }, res)
+          })
+        }
+      }
+      if (data =='Lobby'){
+        if (localStorage.getItem('auto_choose_rank') ==='yes'){
+          getToken().then(res=>{
+            https({
+              url: '/lol-lobby/v1/lobby/members/localMember/position-preferences',
+              type: 'PUT',
+              body: JSON.parse(localStorage.getItem('choose_rank'))
+            },res)
           })
         }
       }
@@ -89,10 +102,11 @@ export default {
           })
         }
 
-        if (localStorage.getItem('auto_start_match_utils') === 'yes'){
+        if (localStorage.getItem('auto_start_match_utils') === 'yes') {
           window.ipcRenderer.send('MatchUtil')
         }
-      }else {
+
+      } else {
         window.ipcRenderer.send('MatchUtilClose')
       }
 

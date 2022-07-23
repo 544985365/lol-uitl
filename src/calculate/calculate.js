@@ -1,139 +1,150 @@
 import {Match} from "@/calculate/Match";
+import {https} from "@/lcu/LcuHttps";
+import {getToken} from "@/lcu/LcuApi";
 
-export function calculate_kda(res) {
+
+
+
+export async function calculate_kda(res) {
     //console.log(res);
-    let arr = formatJson(res)
-    let kd = [], assis = [], kills = [], deaths = [], magicDamageDealt = [], physicalDamageDealt = [],
-        totalDamageDealt = [], totalMinionsKilled = [], win = [],
-        creepsPerMinDeltas = [], goldPerMinDeltas = []
-    let doubleKills = 0, firstBloodKill = 0, tripleKills = 0, pentaKills = 0, quadraKills = 0
+    return await new Promise((resolve) => {
+         formatJson(res).then(arr=>{
+             let kd = [], assis = [], kills = [], deaths = [], magicDamageDealt = [], physicalDamageDealt = [],
+                 totalDamageDealt = [], totalMinionsKilled = [], win = [],
+                 creepsPerMinDeltas = [], goldPerMinDeltas = []
+             let doubleKills = 0, firstBloodKill = 0, tripleKills = 0, pentaKills = 0, quadraKills = 0
+
+             for (let i = 0; i < arr.length; i++) {
+                 kd.push((arr[i].kills + arr[i].assists) / arr[i].deaths)
+                 assis.push(arr[i].deaths)
+                 kills.push(arr[i].kills)
+                 deaths.push(arr[i].deaths)
+                 tripleKills = tripleKills + arr[i].tripleKills
+                 doubleKills = doubleKills + arr[i].doubleKills
+                 pentaKills = pentaKills + arr[i].pentaKills
+                 firstBloodKill = firstBloodKill + arr[i].firstBloodKill
+                 magicDamageDealt.push(arr[i].magicDamageDealt)
+                 physicalDamageDealt.push(arr[i].physicalDamageDealt)
+                 quadraKills = quadraKills + arr[i].quadraKills
+                 totalDamageDealt.push(arr[i].totalDamageDealt)
+                 totalMinionsKilled.push(arr[i].totalMinionsKilled)
+                 win.push(arr[i].win)
+                 creepsPerMinDeltas.push(arr[i].creepsPerMinDeltas)
+                 goldPerMinDeltas.push(arr[i].goldPerMinDeltas)
+             }
 
 
-    for (let i = 0; i < arr.length; i++) {
-        kd.push((arr[i].kills + arr[i].assists) / arr[i].deaths)
-        assis.push(arr[i].deaths)
-        kills.push(arr[i].kills)
-        deaths.push(arr[i].deaths)
-        tripleKills = tripleKills + arr[i].tripleKills
-        doubleKills = doubleKills + arr[i].doubleKills
-        pentaKills = pentaKills + arr[i].pentaKills
-        firstBloodKill = firstBloodKill + arr[i].firstBloodKill
-        magicDamageDealt.push(arr[i].magicDamageDealt)
-        physicalDamageDealt.push(arr[i].physicalDamageDealt)
-        quadraKills = quadraKills + arr[i].quadraKills
-        totalDamageDealt.push(arr[i].totalDamageDealt)
-        totalMinionsKilled.push(arr[i].totalMinionsKilled)
-        win.push(arr[i].win)
-        creepsPerMinDeltas.push(arr[i].creepsPerMinDeltas)
-        goldPerMinDeltas.push(arr[i].goldPerMinDeltas)
-    }
+             let responseData = {
+                 kd: kd.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < kd.length; i++) {
+                         a = a + kd[i]
+                     }
+                     return a / kd.length
 
-    let responseData = {
-        kd: kd.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < kd.length; i++) {
-                a = a + kd[i]
-            }
-            return a / kd.length
+                 },
+                 assis: assis.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < assis.length; i++) {
+                         a = a + assis[i]
+                     }
+                     return a / assis.length
+                 },
+                 kills: kills.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < kills.length; i++) {
+                         a = a + kills[i]
+                     }
+                     return a / kills.length
+                 },
+                 deaths: deaths.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < deaths.length; i++) {
+                         a = a + deaths[i]
+                     }
+                     return a / deaths.length
+                 },
+                 magicDamageDealt: magicDamageDealt.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < magicDamageDealt.length; i++) {
+                         a = a + magicDamageDealt[i]
+                     }
+                     return a / magicDamageDealt.length
+                 },
+                 physicalDamageDealt: physicalDamageDealt.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < physicalDamageDealt.length; i++) {
+                         a = a + physicalDamageDealt[i]
+                     }
+                     return a / physicalDamageDealt.length
+                 },
+                 totalDamageDealt: totalDamageDealt.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < totalDamageDealt.length; i++) {
+                         a = a + totalDamageDealt[i]
+                     }
+                     return a / totalDamageDealt.length
+                 },
+                 totalMinionsKilled: totalMinionsKilled.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < totalMinionsKilled.length; i++) {
+                         a = a + totalMinionsKilled[i]
+                     }
+                     return a / totalMinionsKilled.length
+                 },
+                 creepsPerMinDeltas: creepsPerMinDeltas.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < creepsPerMinDeltas.length; i++) {
+                         if (creepsPerMinDeltas[i]['0-10'] === creepsPerMinDeltas[i]['0-10'] && creepsPerMinDeltas[i]['0-10'] != undefined) {
+                             a += creepsPerMinDeltas[i]['0-10']
+                         }
+                         if (creepsPerMinDeltas[i]['10-20'] === creepsPerMinDeltas[i]['10-20'] && creepsPerMinDeltas[i]['10-20'] != undefined) {
+                             a += creepsPerMinDeltas[i]['10-20']
+                         }
+                     }
+                     return a / (creepsPerMinDeltas.length * 2)
+                 },
+                 goldPerMinDeltas: goldPerMinDeltas.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < goldPerMinDeltas.length; i++) {
+                         if (goldPerMinDeltas[i]['0-10'] === goldPerMinDeltas[i]['0-10'] && goldPerMinDeltas[i]['0-10'] != undefined) {
+                             a += Math.trunc(goldPerMinDeltas[i]['0-10'])
+                         }
+                         if (goldPerMinDeltas[i]['10-20'] === goldPerMinDeltas[i]['10-20'] && goldPerMinDeltas[i]['10-20'] != undefined) {
+                             a += Math.trunc(goldPerMinDeltas[i]['10-20'])
+                         }
+                     }
+                     //console.log(a)
+                     //console.log(a / (goldPerMinDeltas.length * 2))
 
-        },
-        assis: assis.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < assis.length; i++) {
-                a = a + assis[i]
-            }
-            return a / assis.length
-        },
-        kills: kills.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < kills.length; i++) {
-                a = a + kills[i]
-            }
-            return a / kills.length
-        },
-        deaths: deaths.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < deaths.length; i++) {
-                a = a + deaths[i]
-            }
-            return a / deaths.length
-        },
-        magicDamageDealt: magicDamageDealt.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < magicDamageDealt.length; i++) {
-                a = a + magicDamageDealt[i]
-            }
-            return a / magicDamageDealt.length
-        },
-        physicalDamageDealt: physicalDamageDealt.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < physicalDamageDealt.length; i++) {
-                a = a + physicalDamageDealt[i]
-            }
-            return a / physicalDamageDealt.length
-        },
-        totalDamageDealt: totalDamageDealt.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < totalDamageDealt.length; i++) {
-                a = a + totalDamageDealt[i]
-            }
-            return a / totalDamageDealt.length
-        },
-        totalMinionsKilled: totalMinionsKilled.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < totalMinionsKilled.length; i++) {
-                a = a + totalMinionsKilled[i]
-            }
-            return a / totalMinionsKilled.length
-        },
-        creepsPerMinDeltas: creepsPerMinDeltas.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < creepsPerMinDeltas.length; i++) {
-                if (creepsPerMinDeltas[i]['0-10'] === creepsPerMinDeltas[i]['0-10'] && creepsPerMinDeltas[i]['0-10'] != undefined) {
-                    a += creepsPerMinDeltas[i]['0-10']
-                }
-                if (creepsPerMinDeltas[i]['10-20'] === creepsPerMinDeltas[i]['10-20'] && creepsPerMinDeltas[i]['10-20'] != undefined) {
-                    a += creepsPerMinDeltas[i]['10-20']
-                }
-            }
-            return a / (creepsPerMinDeltas.length * 2)
-        },
-        goldPerMinDeltas: goldPerMinDeltas.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < goldPerMinDeltas.length; i++) {
-                if (goldPerMinDeltas[i]['0-10'] === goldPerMinDeltas[i]['0-10'] && goldPerMinDeltas[i]['0-10'] != undefined) {
-                    a += Math.trunc(goldPerMinDeltas[i]['0-10'])
-                }
-                if (goldPerMinDeltas[i]['10-20'] === goldPerMinDeltas[i]['10-20'] && goldPerMinDeltas[i]['10-20'] != undefined) {
-                    a += Math.trunc(goldPerMinDeltas[i]['10-20'])
-                }
-            }
-            //console.log(a)
-            //console.log(a / (goldPerMinDeltas.length * 2))
+                     return a / (goldPerMinDeltas.length * 2)
+                 },
+                 win: win.length == 0 ? [] : () => {
+                     let a = 0
+                     for (let i = 0; i < win.length; i++) {
+                         if (win[i]) {
+                             a++
+                         }
+                     }
+                     return a
+                 },
+                 doubleKills: doubleKills,
+                 firstBloodKill: firstBloodKill,
+                 tripleKills: tripleKills,
+                 pentaKills: pentaKills,
+                 quadraKills: quadraKills,
+             }
+             resolve(responseData)
+        })
 
-            return a / (goldPerMinDeltas.length * 2)
-        },
-        win: win.length == 0 ? [] : () => {
-            let a = 0
-            for (let i = 0; i < win.length; i++) {
-                if (win[i]) {
-                    a++
-                }
-            }
-            return a
-        },
-        doubleKills: doubleKills,
-        firstBloodKill: firstBloodKill,
-        tripleKills: tripleKills,
-        pentaKills: pentaKills,
-        quadraKills: quadraKills,
-    }
 
-    return responseData
+
+    })
+
 
 }
 
-export function formatJson(res) {
+export async function formatJson(res) {
     let arr = new Array()
     let matchList = res.games.games
     for (let i = 0; i < matchList.length; i++) {
@@ -201,6 +212,25 @@ export function formatJson(res) {
     }
 
     return arr
+}
+
+export async function calculate_kda_all_user(arr) {
+    return await new Promise((resolve, reject) => {
+        let list = new Array()
+        getToken().then(resp => {
+            for (let i = 0; i < arr.length; i++) {
+                https({
+                    url: '/lol-match-history/v3/matchlist/account/' + arr.summonerId + '?begIndex=0&endIndex=10',
+                    type: 'GET'
+                }, resp).then(res => {
+                    list.push(calculate_kda(res))
+                }).catch(err => {
+                    reject(err)
+                })
+            }
+            resolve(list)
+        })
+    })
 }
 
 export default {calculate_kda, formatJson}

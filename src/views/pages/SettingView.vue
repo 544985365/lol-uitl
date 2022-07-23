@@ -10,6 +10,26 @@
                 </el-option>
               </el-select>
             </el-form-item>
+
+            <el-form-item label="自动选择位置">
+              <el-select v-model="first_choose" class="m-2" placeholder="首要位置" filterable @change="lisFirstChoose">
+                <el-option
+                    v-for="item in firstPosition"
+                    :key="item.position"
+                    :label="item.name"
+                    :value="item.position"
+                />
+              </el-select>
+              <el-select v-model="second_choose" class="m-2" placeholder="次要位置" style="margin-left: 10px" @change="lisSecondChoose">
+                <el-option
+                    v-for="item in secondPosition"
+                    :key="item.position"
+                    :label="item.name"
+                    :value="item.position"
+                />
+              </el-select>
+
+            </el-form-item>
           </el-col>
           <el-col :span="24"></el-col>
         </el-row>
@@ -27,15 +47,99 @@ export default {
   data() {
     return {
       champList: [],
-      selectVal: '无'
+      selectVal: '无',
+      first_choose: localStorage.getItem('choose_rank') == null ? '' : JSON.parse(localStorage.getItem('choose_rank')).firstPreference,
+      second_choose: localStorage.getItem('choose_rank') == null ? '' : JSON.parse(localStorage.getItem('choose_rank')).secondPreference,
+      secondPosition: [
+        {
+          position: 'TOP',
+          name: '上路'
+        },
+        {
+          position: 'JUNGLE',
+          name: '打野'
+        },
+        {
+          position: 'MIDDLE',
+          name: '中路'
+        },
+        {
+          position: 'BOTTOM',
+          name: '射手'
+        },
+        {
+          position: 'UTILITY',
+          name: '辅助'
+        },
+        {
+          position: 'FULL',
+          name: '补位'
+        }
+      ],
+      firstPosition: [
+        {
+          position: 'TOP',
+          name: '上路'
+        },
+        {
+          position: 'JUNGLE',
+          name: '打野'
+        },
+        {
+          position: 'MIDDLE',
+          name: '中路'
+        },
+        {
+          position: 'BOTTOM',
+          name: '射手'
+        },
+        {
+          position: 'UTILITY',
+          name: '辅助'
+        },
+        {
+          position: 'UNSELECTED',
+          name: '补位'
+        }
+      ]
     }
   },
   methods: {
     select_auto_choose(val) {
       if (val != -1) {
         localStorage.setItem("choose_champ", val)
-      }else {
+      } else {
         localStorage.removeItem('choose_champ')
+      }
+    },
+    lisFirstChoose(val) {
+      console.log(123);
+      let choose_rank = localStorage.getItem('choose_rank')
+      if (choose_rank != null) {
+        let json = JSON.parse(choose_rank)
+        json.firstPreference = val
+        localStorage.setItem('choose_rank', JSON.stringify(json))
+      } else {
+
+        let json = {
+          firstPreference: val,
+          secondPreference: ''
+        }
+        localStorage.setItem('choose_rank', JSON.stringify(json))
+      }
+    },
+    lisSecondChoose(val) {
+      let choose_rank = localStorage.getItem('choose_rank')
+      if (choose_rank != null) {
+        let json = JSON.parse(choose_rank)
+        json.secondPreference = val
+        localStorage.setItem('choose_rank', JSON.stringify(json))
+      } else {
+        let json = {
+          firstPreference: '',
+          secondPreference: val
+        }
+        localStorage.setItem('choose_rank', JSON.stringify(json))
       }
     }
   },

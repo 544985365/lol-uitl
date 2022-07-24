@@ -1,7 +1,7 @@
 
 export class Match{
     accountId
-
+    name
     summonerName
     //游戏开始时间
     gameCreationDate

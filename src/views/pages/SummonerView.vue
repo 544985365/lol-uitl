@@ -139,7 +139,7 @@ export default {
         }, token).then(res => {
           //console.log(res);
           calculate_kda(res).then(temp=>{
-            console.log(temp)
+            //console.log(temp)
             this.kda.kd = temp.kd
             this.kda.assis = temp.assis
             this.kda.kills = temp.kills

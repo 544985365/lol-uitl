@@ -21,8 +21,8 @@
 <script>
 import {ElLoading} from "element-plus";
 import {ref} from "vue";
-import {getToken} from "@/lcu/LcuApi";
-import {https} from "@/lcu/LcuHttps";
+import {gameFlow} from "@/js/gameflow";
+import {init} from "@/js/appStartInit";
 
 const loading = ref(false)
 export default {
@@ -33,20 +33,7 @@ export default {
     }
   },
   mounted() {
-    if (localStorage.getItem('auto_accept') == null) {
-      localStorage.setItem('auto_accept', 'no')
-    }
-    if (localStorage.getItem('auto_choose') == null) {
-      localStorage.setItem('auto_choose', 'no')
-    }
-    if (localStorage.getItem('auto_start_match_utils') == null) {
-      localStorage.setItem('auto_start_match_utils', 'no')
-    }
-    if (localStorage.getItem("auto_choose_rank") == null) {
-      localStorage.setItem('auto_choose_rank', 'no')
-    }
-
-
+    init()
     this.main_loading()
     const lcu = new window.LCU();
     lcu.wsEvents.on('connect', () => {
@@ -58,59 +45,7 @@ export default {
     })
 
     lcu.events.on('/lol-gameflow/v1/gameflow-phase', (data) => {
-      if (data == 'ReadyCheck') {
-        if (localStorage.getItem('auto_accept') === 'yes') {
-          getToken().then(res => {
-            https({
-              url: '/lol-matchmaking/v1/ready-check/accept',
-              type: 'POST'
-            }, res)
-          })
-        }
-      }
-      if (data =='Lobby'){
-        if (localStorage.getItem('auto_choose_rank') ==='yes'){
-          getToken().then(res=>{
-            https({
-              url: '/lol-lobby/v1/lobby/members/localMember/position-preferences',
-              type: 'PUT',
-              body: JSON.parse(localStorage.getItem('choose_rank'))
-            },res)
-          })
-        }
-      }
-      if (data == 'ChampSelect') {
-        if (localStorage.getItem('auto_choose') === 'yes') {
-          getToken().then(res => {
-            https({
-              url: '/lol-champ-select-legacy/v1/session/actions/1',
-              type: "PATCH",
-              body: {
-                "championId": localStorage.getItem('choose_champ'),
-                "id": 1
-              }
-            }, res).then(() => {
-              https({
-                url: '/lol-champ-select-legacy/v1/session/actions/1/complete',
-                type: "POST",
-                body: {
-                  "championId": localStorage.getItem('choose_champ'),
-                  "id": 1
-                }
-              }, res)
-            })
-          })
-        }
-
-        if (localStorage.getItem('auto_start_match_utils') === 'yes') {
-          window.ipcRenderer.send('MatchUtil')
-        }
-
-      } else {
-        window.ipcRenderer.send('MatchUtilClose')
-      }
-
-
+      gameFlow(data)
     })
   },
   methods: {

@@ -140,6 +140,7 @@ export async function calculate_kda(res) {
                 tripleKills: tripleKills,
                 pentaKills: pentaKills,
                 quadraKills: quadraKills,
+                name: ''
             }
             resolve(responseData)
         })
@@ -215,6 +216,7 @@ export async function formatJson(res) {
         match.queueId = matchList[i].queueId
         match.seasonId = matchList[i].seasonId
         match.team = matchList[i].team
+        match.kda =
         arr.push(match)
     }
 

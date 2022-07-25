@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-col>
-      <el-button @click="sendMessage">发送战绩信息</el-button>
+      <el-button @click="sendMessage" plain v-if="sendMessageBtn">发送战绩信息</el-button>
       <el-table :data="participantsList" style="width: 100%">
         <el-table-column prop="name" label="召唤师" width="130"/>
         <el-table-column prop="challengeCrystalLevel" label="段位" width="120">
@@ -21,7 +21,7 @@
         </el-table-column>
         <el-table-column label="操作" width="120">
           <template #default="scope">
-            <el-button @click="lookUserScope(scope.row.summonerId)" size="small" type="info">查看战绩</el-button>
+            <el-button @click="lookUserScope(scope.row.name)" size="small" type="info">查看战绩</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -45,6 +45,7 @@ export default {
   name: "MatchUtilView",
   data() {
     return {
+      sendMessageBtn: localStorage.getItem('auto_send_message') === 'no',
       participantsList: [],
       romId: '',
       summonerIds: [],
@@ -58,8 +59,8 @@ export default {
     }
   },
   methods: {
-    lookUserScope(id) {
-      console.log(id)
+    lookUserScope(name) {
+      window.ipcRenderer.send("select-summoner-name", name)
     },
     sendMessage() {
       getToken().then(resp => {
@@ -120,6 +121,10 @@ export default {
           }
         }
 
+      }).then(() => {
+        if (localStorage.getItem('auto_send_message') === 'yes') {
+          this.sendMessage()
+        }
       })
       loading.value.close()
     })

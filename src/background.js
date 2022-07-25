@@ -126,6 +126,14 @@ if (isDevelopment) {
     }
 }
 
+ipcMain.on('select-summoner-name', (event, args) => {
+    win.show()
+    win.webContents.send('mainView-show')
+    win.webContents.send('select-summoner-name-renderer',args)
+    //event.reply('mainView-show')
+    //event.reply('select-summoner-name-renderer',args)
+})
+
 ipcMain.on('MatchUtil', () => {
     win.hide()
     if (matchWin != null) {
@@ -153,7 +161,6 @@ ipcMain.on('MatchUtil', () => {
         }
         matchWin.setMenu(null)
         matchWin.resizable = false
-
         matchWin.maximizable = false
         matchWin.setPosition(60, 70, true)
         matchWin.once('ready-to-show', () => {

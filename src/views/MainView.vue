@@ -8,7 +8,7 @@
       <el-menu-item index="1" @click="this.$router.push({path:'/index'})">主页</el-menu-item>
       <el-menu-item index="2" @click="this.$router.push({path:'/summoner'})">召唤师信息</el-menu-item>
       <el-menu-item index="3" @click="this.$router.push({path:'/utils'})">工具</el-menu-item>
-      <el-menu-item index="4" @click="this.$router.push({path:'/match-query'})">战绩查询</el-menu-item>
+      <el-menu-item index="4" @click="showQuery">战绩查询</el-menu-item>
       <el-menu-item index="5" @click="this.$router.push({path:'/setting'})">设置</el-menu-item>
     </el-menu>
 
@@ -33,6 +33,11 @@ export default {
     }
   },
   mounted() {
+    window.ipcRenderer.on('mainView-show', () => {
+      //console.log(123123)
+      this.showQuery()
+    })
+
     init()
     this.main_loading()
     const lcu = new window.LCU();
@@ -49,6 +54,9 @@ export default {
     })
   },
   methods: {
+    showQuery() {
+      this.$router.push({path: '/match-query'})
+    },
     main_loading() {
       loading.value = ElLoading.service({
         lock: true,

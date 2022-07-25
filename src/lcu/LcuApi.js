@@ -15,7 +15,7 @@ export function getToken() {
             if (code == 0) {
                 let strout = window.iconv.decode(window.iconv.encode(data, 'base64'), 'gb2312');
                 strout = strout.replaceAll('\n','').replaceAll(' ','').replaceAll('\r','').trim()
-                console.log(strout);
+                //console.log(strout);
                 const d = {
                     port: strout == '' ? '' : strout.match(portRegex)[1],
                     password: strout == '' ? '' : "Basic " + Buffer.from('riot:' + strout.match(passwordRegex)[1]).toString('base64'),

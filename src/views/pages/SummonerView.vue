@@ -63,7 +63,7 @@
                   <p>一血: {{ kda.firstBloodKill }}</p>
                   <p>平均魔法伤害: {{ kda.magicDamageDealt }}</p>
                   <p>平均物理伤害: {{ kda.physicalDamageDealt }}</p>
-                  <p>平均真实伤害: {{ kda.totalDamageDealt }}</p>
+                  <p>平均伤害: {{ kda.totalDamageDealt }}</p>
 
                 </el-col>
                 <el-col :span="8" class="user-message">
@@ -132,7 +132,7 @@ export default {
         //console.log(res.accountId);
         this.xp =100- Math.trunc(res.xpUntilNextLevel / (res.xpSinceLastLevel + res.xpUntilNextLevel) * 100)
         this.summonerImg = 'https://dlied1.qq.com/lolapp/lol/summoner/profileicon/' + this.summoner.profileIconId + '.jpg'
-        console.log(this.summoner.accountId)
+        //console.log(this.summoner.accountId)
         https({
           url: '/lol-match-history/v3/matchlist/account/' + this.summoner.accountId + '?begIndex=0&endIndex=10',
           type: 'GET'

@@ -165,7 +165,6 @@ ipcMain.on('MatchUtil', () => {
         matchWin.setPosition(60, 70, true)
         matchWin.once('ready-to-show', () => {
             matchWin.show();
-
         });
         matchWin.on('close', () => {
             if (matchWin != null) {
